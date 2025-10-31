@@ -1,0 +1,7 @@
+# MCP debugpy server - install from PyPI when published
+# For now, install from source:
+# git+https://github.com/markomanninen/mcp-debugpy.git
+
+# Testing dependencies
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
