@@ -1,10 +1,6 @@
 {
   "mcp.servers.agentDebug": {
-    "command": "${workspaceFolder}/.venv/bin/python",
-    "args": ["-m", "mcp_server"],
-    "cwd": "${workspaceFolder}",
-    "env": {
-      "PYTHONPATH": "${workspaceFolder}"
-    }
+    "command": "${workspaceFolder}/.venv/bin/mcp-debug-server",
+    "cwd": "${workspaceFolder}"
   }
 }

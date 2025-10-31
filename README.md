@@ -71,13 +71,41 @@ Notice how the total with discount ($11.40) is way off from the expected value (
 
 ## Debugging with MCP Debugpy
 
+**IMPORTANT**: After installation, you need to configure your MCP client (VS Code or Claude Desktop) to use the mcp-debugpy server.
+
 ### Option A: VS Code with MCP Extension
 
-The repository includes [.vscode/settings.json](.vscode/settings.json) pre-configured for mcp-debugpy.
+#### Step 1: Open in VS Code
+```bash
+cd mcp-debugpy-demo
+code .
+```
 
-1. Open this repository in VS Code
-2. Open the AI chat panel (make sure MCP extension is installed)
-3. Ask the AI: "Debug the shopping_cart.py bug using breakpoints"
+#### Step 2: Configure MCP Server
+The repository includes `.vscode/settings.json` pre-configured. It uses the `mcp-debug-server` command that was installed by pip.
+
+**What it looks like**:
+```json
+{
+  "mcp.servers.agentDebug": {
+    "command": "${workspaceFolder}/.venv/bin/mcp-debug-server",
+    "cwd": "${workspaceFolder}"
+  }
+}
+```
+
+#### Step 3: Reload VS Code
+- Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
+- Type "Developer: Reload Window"
+- Press Enter
+
+#### Step 4: Verify MCP Server
+- Open the AI chat panel
+- You should see "agentDebug" server available
+- Try asking: "What MCP tools are available?"
+
+#### Step 5: Start Debugging
+Ask the AI: **"Debug the shopping_cart.py bug using breakpoints"**
 
 The AI agent can use these MCP tools:
 - `dap_launch` - Start debugging with breakpoints
@@ -88,63 +116,92 @@ The AI agent can use these MCP tools:
 
 ### Option B: Claude Desktop
 
-1. Configure Claude Desktop with the mcp-debugpy server:
+#### Step 1: Find Config File
 
-   **macOS/Linux**: Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+**Linux**: `~/.config/Claude/claude_desktop_config.json`
 
-   **Windows**: Edit `%APPDATA%\Claude\claude_desktop_config.json`
+#### Step 2: Add MCP Server Configuration
 
-   ```json
-   {
-     "mcpServers": {
-       "agentDebug": {
-         "command": "/full/path/to/mcp-debugpy-demo/.venv/bin/python",
-         "args": ["-m", "mcp_server"],
-         "cwd": "/full/path/to/mcp-debugpy-demo"
-       }
-     }
-   }
+Edit the config file and add (replace `/absolute/path/to/` with your actual path):
+
+```json
+{
+  "mcpServers": {
+    "agentDebug": {
+      "command": "/absolute/path/to/mcp-debugpy-demo/.venv/bin/mcp-debug-server",
+      "cwd": "/absolute/path/to/mcp-debugpy-demo"
+    }
+  }
+}
+```
+
+**To get your absolute path**:
+```bash
+cd mcp-debugpy-demo
+pwd
+# Copy this path and use it above
+```
+
+#### Step 3: Restart Claude Desktop
+
+Completely quit and relaunch Claude Desktop.
+
+#### Step 4: Verify MCP Server
+
+In a new conversation, ask: **"What MCP tools do you have available?"**
+
+You should see tools like `dap_launch`, `dap_locals`, `run_tests_json`, etc.
+
+#### Step 5: Start Debugging
+
+Ask: **"Help me debug the shopping cart discount bug"**
+
+### Option C: Claude Code (VS Code Extension)
+
+Claude Code automatically detects the `.vscode/settings.json` configuration. Just:
+
+1. Open the folder in VS Code
+2. Make sure Claude Code extension is installed
+3. Open Claude Code chat
+4. Ask: **"Debug shopping_cart.py using breakpoints"**
+
+### Troubleshooting MCP Setup
+
+#### "mcp-debug-server: command not found"
+
+The virtual environment isn't activated or mcp-debugpy isn't installed:
+```bash
+source .venv/bin/activate
+pip install git+https://github.com/markomanninen/mcp-debugpy.git
+which mcp-debug-server  # Should show path in .venv/bin/
+```
+
+#### "MCP server not connecting"
+
+1. Check the path in settings is correct (absolute paths work best)
+2. Make sure the virtual environment exists
+3. Try running the server manually to see errors:
+   ```bash
+   .venv/bin/mcp-debug-server --help
    ```
 
-2. Restart Claude Desktop
-3. Start a conversation: "Help me debug the bug in shopping_cart.py"
+#### "No MCP tools available"
 
-### Example Debugging Session
+1. Reload VS Code window (Cmd/Ctrl+Shift+P → "Developer: Reload Window")
+2. Check VS Code Output panel for MCP server errors
+3. Verify the MCP extension is installed and enabled
 
-Ask the AI assistant:
+### Manual Configuration (Alternative)
 
-> "There's a bug in shopping_cart.py causing wrong discount calculations. Help me debug it by:
-> 1. Running the tests to see what's failing
-> 2. Setting a breakpoint in calculate_total()
-> 3. Inspecting the variables when the discount is applied
-> 4. Finding and explaining the bug"
+If you prefer not to use the pre-configured `.vscode/settings.json`, you can configure manually:
 
-The AI will:
-1. Run `run_tests_json` to see the failing tests
-2. Use `dap_launch` to start debugging with a breakpoint at line 45
-3. Use `dap_locals` to inspect `subtotal`, `discount_amount`, and `self.discount_rate`
-4. Use `dap_step_over` to step through the calculation
-5. Identify that line 45 multiplies instead of subtracting the discount
+1. Open VS Code Settings (JSON)
+2. Add the MCP server configuration manually
+3. Use absolute paths for reliability
 
-### Manual Debugging (Traditional Way)
 
-If you want to debug manually without MCP:
-
-```bash
-# Run with Python debugger
-python -m pdb shopping_cart.py
-
-# Set breakpoint
-(Pdb) b shopping_cart.py:45
-
-# Run
-(Pdb) continue
-
-# Inspect variables
-(Pdb) p subtotal
-(Pdb) p discount_amount
-(Pdb) p self.discount_rate
-```
 
 ## The Fix
 
