@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "agentDebug": {
+      "type": "stdio",
+      "command": "./.venv/bin/mcp-debug-server",
+      "args": [],
+      "env": {}
+    }
+  }
+}

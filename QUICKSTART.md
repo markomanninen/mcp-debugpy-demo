@@ -33,7 +33,10 @@ python shopping_cart.py
 ```
 
 You'll see:
-```
+
+```text
+Items in cart: 4
+Subtotal: $1139.96
 Total with 10% discount: $129950.88
 Expected total: $971.96
 WARNING: Total doesn't match expected value!
@@ -48,6 +51,7 @@ pytest test_shopping_cart.py -v
 ```
 
 You'll see 3 failing tests:
+
 - `test_calculate_total_no_discount` - Even without discount, total is wrong!
 - `test_calculate_total_with_discount` - Gets $1000 instead of $90
 - `test_complex_scenario` - Way off the mark
@@ -56,14 +60,36 @@ You'll see 3 failing tests:
 
 ### Option A: VS Code
 
-1. Open this repository in VS Code
-2. Make sure you have:
-   - Python extension installed
-   - MCP extension installed
-3. Open AI chat panel
-4. Ask: **"Debug shopping_cart.py using breakpoints at calculate_total"**
+1. Create (or open) the workspace settings file at `.vscode/settings.json`.
+2. Add a simple MCP server entry (replace the absolute paths with your environment):
+
+```json
+{
+  "mcp.mcpServers": {
+    "agentDebug": {
+      "command": "${workspaceFolder}/.venv/bin/mcp-debug-server",
+      "args": [],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}
+```
+
+Notes:
+
+- Use an absolute path to the server executable inside the virtualenv (for example `./.venv/bin/mcp-debug-server`).
+- The key name (`agentDebug`) is the server identifier you'll reference from the Chat UI or the extension commands.
+
+Enable the server in the AI/Chat panel
+
+1. Restart VS Code after installing the extension so the new commands/settings are picked up.
+2. Open the AI/Chat panel (View → Command Palette → type "Chat" or open the extension-provided Chat view).
+3. If the MCP extension exposes a server selector in the Chat UI, choose the `agentDebug` server. If it provides a Command Palette command (for example, "MCP: Launch server"), run that command and pick `agentDebug`.
+4. Open AI chat panel
+5. Ask: **"Debug shopping_cart.py using breakpoints at calculate_total"**
 
 The AI will:
+
 - Set breakpoint at line 45 (the buggy line)
 - Launch debugger
 - Inspect variables
@@ -72,13 +98,14 @@ The AI will:
 ### Option B: Claude Desktop
 
 1. Configure in `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
    ```json
    {
      "mcpServers": {
        "agentDebug": {
-         "command": "/absolute/path/to/.venv/bin/python",
-         "args": ["-m", "mcp_server"],
-         "cwd": "/absolute/path/to/mcp-debugpy-demo"
+         "command": "${workspaceFolder}/.venv/bin/mcp-debug-server",
+         "args": [],
+         "cwd": "${workspaceFolder}"
        }
      }
    }
@@ -106,11 +133,12 @@ return subtotal * (1 - self.discount_rate)
 The code **multiplies** the subtotal by the discount amount instead of **subtracting** it!
 
 Example with 10% discount on $100:
+
 - Discount amount = $100 × 0.10 = $10
 - Wrong calculation: $100 × $10 = **$1,000** (way too much!)
 - Right calculation: $100 - $10 = **$90** (correct!)
 
-## 6. Fix It
+## 6. Fix It (Only After Succesful Debug)
 
 Edit [shopping_cart.py](shopping_cart.py) line 45:
 

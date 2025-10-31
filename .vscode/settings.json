@@ -1,9 +1,0 @@
-{
-  "mcp.servers.agentDebug": {
-    "command": "${workspaceFolder}/.venv/bin/mcp-debug-server",
-    "windows": {
-      "command": "${workspaceFolder}/.venv/Scripts/mcp-debug-server.exe"
-    },
-    "cwd": "${workspaceFolder}"
-  }
-}

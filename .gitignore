@@ -27,9 +27,6 @@ ENV/
 env/
 
 # IDE
-# Note: .vscode/settings.json is included for MCP configuration
-.vscode/*
-!.vscode/settings.json
 .idea/
 *.swp
 *.swo
@@ -45,5 +42,7 @@ Thumbs.db
 htmlcov/
 *.log
 
-# MCP
-.mcp/
+# AI
+.claude
+
+demo_program.py
