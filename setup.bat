@@ -53,6 +53,15 @@ if errorlevel 1 (
 )
 echo.
 
+REM Configure MCP settings
+echo Configuring MCP settings for this system...
+python configure_mcp.py
+if errorlevel 1 (
+    echo WARNING: Failed to configure MCP settings
+    echo You may need to configure manually
+)
+echo.
+
 echo ========================================
 echo Setup complete!
 echo ========================================

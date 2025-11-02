@@ -45,4 +45,4 @@ htmlcov/
 # AI
 .claude
 
-demo_program.py
+*mcp.json

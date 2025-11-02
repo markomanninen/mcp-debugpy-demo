@@ -65,6 +65,14 @@ else
 fi
 
 echo ""
+echo "Configuring MCP settings for this system..."
+if python configure_mcp.py; then
+	echo "MCP configuration created successfully."
+else
+	echo "WARNING: Failed to configure MCP settings. You may need to configure manually."
+fi
+
+echo ""
 echo "Setup complete!"
 echo ""
 echo "To activate the environment, run:" 
